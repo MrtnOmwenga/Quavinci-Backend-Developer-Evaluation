@@ -4,7 +4,7 @@
 
 **Objective**: Implement a REST API endpoint /api/users/:userId using routing-controllers and @typegoose/typegoose for retrieving user data from a MongoDB database. This should be complemented with Swagger documentation, custom rate limiting, logging, and comprehensive error handling. The endpoint response must be properly typed.
 
-#### Requirements:
+### Requirements:
 
 **API Endpoint with routing**-controllers: Utilize routing-controllers to create a controller for user routes. The /api/users/:userId endpoint should handle GET requests and be well-structured for maintainability.
 
@@ -24,7 +24,7 @@
 
 **Project Standards Compliance**: The implementation should adhere to the coding standards and practices of the project.
 
-#### Deliverables:
+### Deliverables:
 
  - Complete source code for the endpoint, including controller, model, middleware, and any other files.
  - Accessible Swagger documentation (e.g., via /api-docs).
