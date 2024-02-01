@@ -15,7 +15,7 @@ if (!SECRET) {
 OtherRoutes.get('/test', (request: Request, response: Response): Response => {
       return response.json({ message: "Success" });
 });
-    
+
 OtherRoutes.get("/", async (request: Request, response: Response): Promise<Response> => {
       const AllUsers: Users[] = await UserModel.find({});
       return response.status(200).json(AllUsers);
