@@ -49,7 +49,7 @@ OtherRoutes.post("/", async (request: Request, response: Response): Promise<Resp
 
     return response
         .status(200)
-        .json({ token, name: result.name, id: result.id });
+        .json({ token, name: result.name, id: result.id, email: result.email });
 });
 
 export default OtherRoutes

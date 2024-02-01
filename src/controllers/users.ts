@@ -11,19 +11,24 @@ const UserRoutes: Router = Router();
 
 UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFunction): Promise<void | Response<any, Record<string, any>>> => {
   try {
-    const user: Users | null = await UserModel.findById(request.params.id);
-
-    if (!user) {
-      return response.status(404).json({ error: 'User not found' });
-    }
-
-    const userDto = plainToClass(UserDTO, user);
-
     try {
-      await validateOrReject(userDto);
-      return response.json(userDto);
+      const user: Users | null = await UserModel.findById(request.params.id);
+
+      if (!user) {
+        return response.status(404).json({ error: 'User not found' });
+      }
+  
+      try {
+        await validateOrReject(user);
+        return response.json(user);
+      } catch (errors) {
+        console.log('Validation error', errors);
+        return response.status(400).json({ error: 'Validation error', message: 'Database returned bad data', details: errors });
+      }
+      
     } catch (errors) {
-      return response.status(400).json({ error: 'Validation error', details: errors });
+      console.log('Validation error', errors);
+      return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided', details: errors });
     }
   } catch (error) {
     return next(error);

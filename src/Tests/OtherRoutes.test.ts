@@ -1,28 +1,30 @@
 import app from '../App';
 import mongoose from 'mongoose';
-import { DocumentType } from '@typegoose/typegoose';
 const request = require('supertest');
 import { Users, UserModel } from '../models/users';
+import  { createTestUser } from './test-helper';
 
-async function createTestUser(userData: Partial<Users>): Promise<DocumentType<Users>> {
-  const user = new UserModel({
-    name: 'Test User',
-    email: 'test@example.com',
-    password: 'testpassword',
-    ...userData,
-  });
-  return user.save();
-}
+beforeEach(async () => {
+  // Clear existing data
+  await UserModel.deleteMany({});
 
+  // Create and save test users
+  await createTestUser({});
+  await createTestUser({ name: 'Alice', email: 'alice@example.com', password: 'foobar' });
+  await createTestUser({ name: 'Bob', email: 'bob@example.com', password:'foobar' });
+  // Add more test users as needed
+}, 100000);
 
 describe('OtherRoutes Endpoints', () => {
   // Test the GET endpoint
   describe('GET /api/other', () => {
     it('should get all users', async () => {
       const response = await request(app).get('/api/other');
+      console.log(response.body);
       expect(response.status).toBe(200);
       expect(response.body).toBeDefined();
-      // Add more assertions based on your expected response structure
+      expect(response.body).toBeInstanceOf(Array);
+      expect(response.body).toHaveLength(3);
     }, 50000);
   });
 
@@ -41,10 +43,12 @@ describe('OtherRoutes Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toBeDefined();
-      // Add more assertions based on your expected response structure
+      expect(response.body).toBeInstanceOf(Object);
+      expect(response.body).toHaveProperty('token');
+      expect(response.body).toHaveProperty('name');
+      expect(response.body).toHaveProperty('email');
+      expect(response.body).toHaveProperty('id');
 
-      // Optionally, you may want to store the created user's ID for cleanup in future tests
-      const createdUserId = response.body.id;
     }, 50000);
 
     it('should handle invalid input', async () => {

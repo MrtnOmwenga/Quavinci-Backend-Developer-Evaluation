@@ -1,30 +1,32 @@
-import { prop, getModelForClass, DocumentType  } from "@typegoose/typegoose";
-import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
+import { Schema, Document } from 'mongoose';
+import { getModelForClass, prop, pre } from '@typegoose/typegoose';
 
 export class Users {
   @prop({ required: true })
-  @IsString()
-  @IsNotEmpty()
   public name!: string;
 
-  @prop({ required: true })
-  @IsEmail()
-  @IsNotEmpty()
+  @prop({ required: true, unique: true })
   public email!: string;
 
   @prop({ required: true })
-  @IsString()
-  @IsNotEmpty()
   public password!: string;
 
   @prop({ required: false, default: true })
-  @IsString()
-  @IsNotEmpty()
   public id!: string;
-
-  static async findById(id: string): Promise<DocumentType<Users> | null> {
-    return UserModel.findById(id).exec();
-  }
 }
 
-export const UserModel = getModelForClass(Users);
+const UserModel = getModelForClass(Users, {
+  existingMongoose: undefined,
+  schemaOptions: {
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.id = ret._id.toString();
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+  },
+});
+
+export { UserModel };
