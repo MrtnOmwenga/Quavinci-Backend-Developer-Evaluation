@@ -1,8 +1,12 @@
 import bcryptjs from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import express, { Request, Response, Router } from 'express';
+import { plainToClass } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
 import { UserModel, Users } from "../models/users";
+import { UserDto } from '../dtos/UserDTO';
 import config from '../utils/config';
+import log from '../utils/logger';
 
 const OtherRoutes: Router = Router();
 
@@ -24,29 +28,30 @@ OtherRoutes.get("/", async (request: Request, response: Response): Promise<Respo
 OtherRoutes.post("/", async (request: Request, response: Response): Promise<Response> => {
     const { name, email, password } = request.body;
 
-    if (!name || !email || !password) {
-        return response.status(400).send('Invalid Name, Email or Password');
+    // Validate user data
+    try {
+        const idDto = plainToClass(UserDto, { name, email, password });
+        await validateOrReject(idDto);
+    } catch (error) {
+        log.error('Validation error', error);
+        return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided' });
     }
 
-    if (password.length < 3) {
-        return response.status(400).send('Password must be at least three chatacters');
-    }
-
-    const passwordHash = await bcryptjs.hash(password, 10);
+    // Create and save user data
     const NewStudent = new UserModel({
         name,
         email,
-        password: passwordHash,
+        password: await bcryptjs.hash(password, 10),
     });
-
     const result = await NewStudent.save();
 
-    const forToken = {
+    // Create token
+    const token = jwt.sign({
         name: result.name,
         id: result.id,
-    };
-    const token = jwt.sign(forToken, SECRET);
+    }, SECRET);
 
+    // Return data
     return response
         .status(200)
         .json({ token, name: result.name, id: result.id, email: result.email });

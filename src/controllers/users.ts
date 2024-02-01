@@ -1,7 +1,9 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
 import { validateOrReject } from 'class-validator';
+import { plainToClass } from 'class-transformer';
 import { UserModel, Users } from "../models/users";
 import { errorHandlerMiddleware, requestLogger } from '../utils/middleware';
+import { UserIdDto } from '../dtos/UserDTO';
 import limiter from '../utils/rate-limiter';
 import log from '../utils/logger';
 // import expressAsyncErrors from 'express-async-errors';
@@ -87,35 +89,30 @@ const UserRoutes: Router = Router();
  */
 UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFunction): Promise<void | Response<any, Record<string, any>>> => {
   try {
+    // Validate ID
     try {
-      const user: Users | null = await UserModel.findById(request.params.id);
-
-      // Chack if user was found
-      if (!user) {
-        return response.status(404).json({ error: 'User not found' });
-      }
-  
-      // Validate returned data
-      try {
-        await validateOrReject(user);
-        return response.json(user);
-
-        // Handle Database returning bad data
-      } catch (errors) {
-        log.error('Validation error', errors);
-        return response.status(422).json({ error: 'Validation error', message: 'Database returned bad data' });
-      }
-      
-      // Handle Invalid ID with custom message
+      const idDto = plainToClass(UserIdDto, { id: request.params.id });
+      await validateOrReject(idDto);
     } catch (errors) {
       log.error('Validation error', errors);
       return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided' });
     }
 
+    // Get user
+    const user: Users | null = await UserModel.findById(request.params.id);
+
+    // Chack if user was found
+    if (!user) {
+      return response.status(404).json({ error: 'User not found' });
+    }
+
+    // Return user
+    return response.json(user);
+
     // Handle unexpected errors
   } catch (error) {
     return next(error);
-  }
+  } 
 });
 
 // Apply middleware

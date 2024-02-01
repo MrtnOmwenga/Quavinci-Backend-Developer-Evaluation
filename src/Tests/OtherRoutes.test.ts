@@ -20,7 +20,6 @@ describe('OtherRoutes Endpoints', () => {
   describe('GET /api/other', () => {
     it('should get all users', async () => {
       const response = await request(app).get('/api/other');
-      console.log(response.body);
       expect(response.status).toBe(200);
       expect(response.body).toBeDefined();
       expect(response.body).toBeInstanceOf(Array);
@@ -51,10 +50,44 @@ describe('OtherRoutes Endpoints', () => {
 
     }, 50000);
 
-    it('should handle invalid input', async () => {
+    it('should handle invalid input: Incomplete input', async () => {
       // Test case for handling invalid input
       const invalidUser = {
         name: 'Invalid User',
+        // Omitting required fields intentionally
+      };
+
+      const response = await request(app)
+        .post('/api/other')
+        .send(invalidUser);
+
+      expect(response.status).toBe(400);
+      // Add more assertions based on your expected error response structure
+    }, 50000);
+
+    it('should handle invalid input: Wrong email', async () => {
+      // Test case for handling invalid input
+      const invalidUser = {
+        name: 'Invalid User',
+        email: 'wrongemail',
+        password: 'foobar'
+        // Omitting required fields intentionally
+      };
+
+      const response = await request(app)
+        .post('/api/other')
+        .send(invalidUser);
+
+      expect(response.status).toBe(400);
+      // Add more assertions based on your expected error response structure
+    }, 50000);
+
+    it('should handle invalid input: Short password', async () => {
+      // Test case for handling invalid input
+      const invalidUser = {
+        name: 'Invalid User',
+        email: 'wrongemail',
+        password: 'fo'
         // Omitting required fields intentionally
       };
 
