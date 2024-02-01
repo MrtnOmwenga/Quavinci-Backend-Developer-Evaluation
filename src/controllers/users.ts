@@ -1,9 +1,8 @@
 import express, { NextFunction, Request, Response, Router } from 'express';
-import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
 import { UserModel, Users } from "../models/users";
-import UserDTO from '../dtos/UserDTO';
 import { errorHandlerMiddleware } from '../utils/middleware';
+import limiter from '../utils/rate-limiter';
 // import expressAsyncErrors from 'express-async-errors';
 
 const UserRoutes: Router = Router();
@@ -36,5 +35,6 @@ UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFu
 });
 
 UserRoutes.use(errorHandlerMiddleware);
+UserRoutes.use(limiter);
 
 export default UserRoutes
