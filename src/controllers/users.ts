@@ -25,14 +25,65 @@ const UserRoutes: Router = Router();
  *     responses:
  *       200:
  *         description: User was found and returned.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 password:
+ *                   type: string
+ *                 id:
+ *                   type: string
  *       404:
  *         description: User was not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
  *       400:
  *         description: Invalid ID was provided
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Validation error
+ *                 message:
+ *                   type: string
+ *                   example: Invalid ID provided
  *       422:
  *         description: Database returned bad data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Validation error
+ *                 message:
+ *                   type: string
+ *                   example: Database returned bad data
  *       500:
  *         description: Some unexpected error occurred.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
  */
 UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFunction): Promise<void | Response<any, Record<string, any>>> => {
   try {
@@ -52,13 +103,13 @@ UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFu
         // Handle Database returning bad data
       } catch (errors) {
         log.error('Validation error', errors);
-        return response.status(422).json({ error: 'Validation error', message: 'Database returned bad data', details: errors });
+        return response.status(422).json({ error: 'Validation error', message: 'Database returned bad data' });
       }
       
       // Handle Invalid ID with custom message
     } catch (errors) {
       log.error('Validation error', errors);
-      return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided', details: errors });
+      return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided' });
     }
 
     // Handle unexpected errors

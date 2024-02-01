@@ -48,7 +48,7 @@ describe('UserRoutes.get("/:id")', (): void => {
 
     // Validate response
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({ error: 'Validation error', details: expect.any(Object), message: 'Invalid ID provided' });
+    expect(response.body).toEqual({ error: 'Validation error', message: 'Invalid ID provided' });
   });
 });
 
