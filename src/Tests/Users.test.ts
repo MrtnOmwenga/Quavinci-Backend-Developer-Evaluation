@@ -32,16 +32,21 @@ describe('UserRoutes.get("/:id")', (): void => {
     // Create and delete user
     const dummyUser = await createTestUser({ name: 'Dummy User', email: 'dummyuser@example.com', password: 'foobar'});
     await UserModel.deleteOne({ _id: dummyUser._id });
+
+    // Try getting deleted user
     const response: Response = await request(app).get(`/api/users/${dummyUser._id}`);
 
+    // Validate response
     expect(response.status).toBe(404);
     expect(response.body).toEqual({ error: 'User not found' });
   });
 
   it('should return validation error if user data is invalid', async (): Promise<void> => {
+    // Try getting random invalid string
     const invalidUserId = 'invalid-id';
     const response: Response = await request(app).get(`/api/users/${invalidUserId}`);
 
+    // Validate response
     expect(response.status).toBe(400);
     expect(response.body).toEqual({ error: 'Validation error', details: expect.any(Object), message: 'Invalid ID provided' });
   });

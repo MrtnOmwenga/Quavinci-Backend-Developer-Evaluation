@@ -39,27 +39,35 @@ UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFu
     try {
       const user: Users | null = await UserModel.findById(request.params.id);
 
+      // Chack if user was found
       if (!user) {
         return response.status(404).json({ error: 'User not found' });
       }
   
+      // Validate returned data
       try {
         await validateOrReject(user);
         return response.json(user);
+
+        // Handle Database returning bad data
       } catch (errors) {
         log.error('Validation error', errors);
         return response.status(422).json({ error: 'Validation error', message: 'Database returned bad data', details: errors });
       }
       
+      // Handle Invalid ID with custom message
     } catch (errors) {
       log.error('Validation error', errors);
       return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided', details: errors });
     }
+
+    // Handle unexpected errors
   } catch (error) {
     return next(error);
   }
 });
 
+// Apply middleware
 UserRoutes.use(limiter);
 UserRoutes.use(requestLogger);
 UserRoutes.use(errorHandlerMiddleware);

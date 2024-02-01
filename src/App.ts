@@ -9,9 +9,10 @@ import config from './utils/config';
 import log from './utils/logger';
 import { options } from './utils/swagger';
 
+// Parse options and read routes
 const swaggerSpec = swaggerJSDoc(options);
-console.log(JSON.stringify(swaggerSpec, null, 2));
 
+// Connect to mongodb
 const connectToDatabase = (): void => {
       // Check if MONGODB_URI is defined before using it
       if (config.MONGODB_URI) {
@@ -26,17 +27,19 @@ const connectToDatabase = (): void => {
       }
     }
 
-// Connect to mongodb
 log.info(`connecting to ${config.MONGODB_URI}`);
 connectToDatabase();
 
+// Initialize app
 const app: Application = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Swagger Documentation
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec, { explorer: true }));
 
+// API Routes
 app.use('/api/users', UserRoutes);
 app.use('/api/other', OtherRoutes);
 

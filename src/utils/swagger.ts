@@ -12,7 +12,8 @@ interface Definition {
     info: Info;
     servers: Server[];
 }
-    
+
+// Swagger Options
 export const options: {
     definition: Definition;
     apis: string[];

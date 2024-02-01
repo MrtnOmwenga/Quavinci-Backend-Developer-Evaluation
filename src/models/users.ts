@@ -1,6 +1,6 @@
-import { Schema, Document } from 'mongoose';
 import { getModelForClass, prop, pre } from '@typegoose/typegoose';
 
+// Users model
 export class Users {
   @prop({ required: true })
   public name!: string;
@@ -15,6 +15,7 @@ export class Users {
   public id!: string;
 }
 
+// Refactor model output
 const UserModel = getModelForClass(Users, {
   existingMongoose: undefined,
   schemaOptions: {

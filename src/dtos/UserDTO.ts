@@ -1,6 +1,7 @@
 import { IsString, IsEmail, IsNotEmpty, IsBoolean, IsMongoId, IsInt, Min } from 'class-validator';
 import { ObjectId } from 'mongodb';
 
+// Data transformation object for validating User data
 export class UserDto {
   @IsNotEmpty()
   @IsString()
