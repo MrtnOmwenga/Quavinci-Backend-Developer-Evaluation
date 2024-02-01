@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { NotFoundError, ValidationError } from './errors';
 import log from './logger';
 
-const requestLogger = (request: Request, response: Response, next: NextFunction) => {
+export const requestLogger = (request: Request, response: Response, next: NextFunction) => {
   log.info('Method:', request.method);
   log.info('Path:  ', request.path);
   log.info('Body:  ', request.body);
