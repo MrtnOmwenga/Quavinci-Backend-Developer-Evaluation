@@ -1,5 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { NotFoundError, ValidationError } from './errors';
+import log from './logger';
+
+const requestLogger = (request: Request, response: Response, next: NextFunction) => {
+  log.info('Method:', request.method);
+  log.info('Path:  ', request.path);
+  log.info('Body:  ', request.body);
+  log.info('Time:  ', new Date());
+  log.info('---');
+  next();
+};
 
 export const errorHandlerMiddleware = (
   err: Error | NotFoundError | ValidationError,

@@ -3,6 +3,7 @@ import { validateOrReject } from 'class-validator';
 import { UserModel, Users } from "../models/users";
 import { errorHandlerMiddleware } from '../utils/middleware';
 import limiter from '../utils/rate-limiter';
+import log from '../utils/logger';
 // import expressAsyncErrors from 'express-async-errors';
 
 const UserRoutes: Router = Router();
@@ -21,12 +22,12 @@ UserRoutes.get('/:id', async (request: Request, response: Response, next: NextFu
         await validateOrReject(user);
         return response.json(user);
       } catch (errors) {
-        console.log('Validation error', errors);
+        log.error('Validation error', errors);
         return response.status(400).json({ error: 'Validation error', message: 'Database returned bad data', details: errors });
       }
       
     } catch (errors) {
-      console.log('Validation error', errors);
+      log.error('Validation error', errors);
       return response.status(400).json({ error: 'Validation error', message: 'Invalid ID provided', details: errors });
     }
   } catch (error) {

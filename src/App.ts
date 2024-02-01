@@ -16,7 +16,7 @@ const connectToDatabase = (): void => {
           log.error('Error connecting to MongoDB:', error);
         }
       } else {
-        console.error('MONGODB_URI is not defined in the configuration');
+        log.error('MONGODB_URI is not defined in the configuration');
       }
     }
 
